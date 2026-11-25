@@ -1,34 +1,40 @@
 # CryptoCharts Overlay
 
-Application de graphiques crypto de bureau, conçue comme un terminal compact, sans cadre, toujours au premier plan. Interface en français, alimentée par les API publiques Binance Spot. Les cotations et les bougies se chargent au démarrage; une connexion WebSocket actualise la bougie courante.
+Terminal graphique de bureau sans cadre, superposable et en français. Les données sont fournies par les API publiques Binance Spot et CoinGecko; aucune clé API n’est requise.
 
-## Prérequis et installation
+## Installation
 
-- Windows 10/11 pour les exécutables; Node.js 18 ou supérieur pour le développement.
-- Connexion Internet (API et WebSocket publics Binance).
+Prérequis : Windows 10/11 pour les exécutables, Node.js 18+ pour le développement et une connexion Internet.
 
 ```bash
 npm install
 npm start
 ```
 
-Pour produire les installateurs Windows NSIS et portable :
+Création des installateurs Windows NSIS et portable :
 
 ```bash
 npm run build
 ```
 
-Les exécutables `.exe` sont produits dans `dist/`. Le graphique Lightweight Charts 4.2.0 est embarqué localement depuis `node_modules`.
+Les exécutables sont créés dans `dist/`. Lightweight Charts 4.2.0 est embarqué localement depuis `node_modules`.
 
-## Fonctionnalités
+## Marchés et recherche
 
-- Recherche des paires Binance Spot USDT négociables; bougies historiques (jusqu'à 1 000 points) et flux kline temps réel.
-- Intervalles : 1m, 5m, 15m, 1h, 4h, 1j, 1s et 1M.
+- Recherche Binance Spot parmi toutes les paires négociables, sans restriction sur l’actif de cotation. La liste déroulante permet un filtre par devise de cotation (USDT, USDC, FDUSD, BTC, ETH, EUR, TRY, etc.) et la saisie filtre les symboles, actifs de base et de cotation.
+- Pour les actifs non trouvés sur Binance, saisissez un nom, un symbole ou un identifiant CoinGecko. La recherche locale utilise `/coins/list`; en cas d’ambiguïté, choisissez une entrée dans la liste proposée. Les graphiques CoinGecko sont exprimés en USD.
+- Les chandelles Binance utilisent le flux WebSocket de klines. Les chandelles CoinGecko (OHLC, complétées si besoin par la série de prix) se rafraîchissent par interrogation périodique. La fréquence et le nombre de points disponibles dépendent des granularités proposées par CoinGecko pour la période sélectionnée.
+- La liste de suivi reçoit les prix et variations 24 h des marchés Binance par flux combiné `miniTicker`. Les actifs CoinGecko de la liste sont interrogés périodiquement. Les connexions Binance tentent une reconnexion automatique.
+- Les erreurs réseau et limites de débit sont signalées sans interrompre l’application; réessayez après un délai en cas de limitation CoinGecko.
+
+## Graphique et outils
+
+- Intervalles : 1m, 5m, 15m, 1h, 4h, 1j, 1s et 1M. La granularité historique CoinGecko varie selon les données disponibles.
 - Chandelles, Heikin-Ashi, OHLC, ligne et zone.
 - SMA 20, EMA 50/200, bandes de Bollinger, volume, RSI 14 et MACD (12,26,9).
-- Liste de suivi (ajout de la paire affichée), alertes de prix avec notification système.
-- Outils de dessin : crayon, ligne, rayon, horizontale/verticale, rectangle, ellipse, flèche, texte, Fibonacci, mesure et gomme; couleur, épaisseur, pointillés, annuler/rétablir, masquer, effacer. Les dessins se replacent à partir de l'heure et du prix; sauvegarde locale par paire et intervalle.
-- Mode clair/sombre, export PNG du graphique avec dessins, réglage d'opacité, toujours-au-premier-plan et clic traversant.
+- Alertes de prix avec notification système.
+- Outils de dessin : crayon, ligne, rayon, horizontale/verticale, rectangle, ellipse, flèche, texte, Fibonacci, mesure et gomme; couleur, épaisseur, pointillés, annuler/rétablir, masquer, effacer. Les dessins sont sauvegardés localement par actif et intervalle.
+- Thème clair/sombre, export PNG, opacité, fenêtre toujours au premier plan et mode clic traversant.
 
 ## Raccourcis
 
@@ -39,6 +45,6 @@ Les exécutables `.exe` sont produits dans `dist/`. Le graphique Lightweight Cha
 | `Ctrl+Y` | Rétablir le dessin |
 | `Échap` | Revenir au curseur |
 
-## Notes techniques
+## Confidentialité et notes
 
-Electron utilise un preload isolé (`contextIsolation: true`, Node désactivé dans le renderer). Les préférences, alertes, paire suivie et dessins sont conservés dans le `localStorage` local à l'application. Aucune clé API n'est requise. La disponibilité dépend du réseau et des services Binance.
+Electron utilise un preload isolé (`contextIsolation: true`, Node désactivé dans le renderer). Les préférences, alertes, liste de suivi et dessins sont enregistrés dans le `localStorage` local. L’application ne requiert aucun secret; les prix et historiques restent soumis à la disponibilité et aux limites des API publiques.
