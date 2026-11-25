@@ -1,0 +1,38 @@
+name: Build Windows
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Installation des dependances
+        run: npm install
+
+      - name: Construction du .exe
+        run: npx electron-builder --win --publish never
+
+      - name: Sauvegarde des fichiers construits
+        uses: actions/upload-artifact@v4
+        with:
+          name: CryptoCharts-Overlay-Windows
+          path: dist/*.exe
+
+      - name: Publication dans Releases
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.exe

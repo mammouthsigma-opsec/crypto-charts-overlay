@@ -5,8 +5,39 @@
   "main": "main.js",
   "author": "CryptoCharts Overlay",
   "license": "MIT",
-  "scripts": {"start":"electron .", "build":"electron-builder --win"},
-  "dependencies": {"lightweight-charts":"4.2.0"},
-  "devDependencies": {"electron":"^32.2.0", "electron-builder":"^25.1.8"},
-  "build": {"appId":"fr.cryptocharts.overlay", "productName":"CryptoCharts Overlay", "asar":true, "files":["main.js","preload.js","index.html","style.css","renderer.js","indicators.js","drawing.js","node_modules/lightweight-charts/**/*","package.json"], "win":{"target":["nsis","portable"]}, "nsis":{"oneClick":false,"allowToChangeInstallationDirectory":true}}
+  "scripts": {
+    "start": "electron .",
+    "postinstall": "node node_modules/electron/install.js",
+    "build": "electron-builder --win --publish never"
+  },
+  "dependencies": {
+    "lightweight-charts": "4.2.0"
+  },
+  "devDependencies": {
+    "electron": "32.3.3",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "fr.cryptocharts.overlay",
+    "productName": "CryptoCharts Overlay",
+    "asar": true,
+    "files": [
+      "main.js",
+      "preload.js",
+      "index.html",
+      "style.css",
+      "renderer.js",
+      "indicators.js",
+      "drawing.js",
+      "node_modules/lightweight-charts/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": ["nsis", "portable"]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  }
 }
